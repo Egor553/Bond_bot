@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI_Bond_bot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #4B0082, #2A0033);
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #1C0022;
+            padding: 15px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid #FFD700;
+        }
+        .header::before {
+            content: "007";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #FFD700;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .header span {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #C0C0C0;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .header span:hover {
+            color: #FFD700;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #2A0033;
+            padding: 15px;
+            border-bottom: 1px solid #FFD700;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav button {
+            background: linear-gradient(45deg, #FF69B4, #C71585);
+            border: 1px solid #FFD700;
+            color: white;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.3s;
+            flex: 1;
+            max-width: 150px;
+            text-align: center;
+        }
+        .nav button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #FFD700;
+        }
+        .nav button.active {
+            background: linear-gradient(45deg, #C71585, #FF69B4);
+            box-shadow: 0 0 15px #FFD700;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .team-member, .wallet-section {
+            background-color: #2A0033;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #FFD700;
+            transition: transform 0.3s;
+        }
+        .team-member:hover, .wallet-section:hover {
+            transform: translateY(-3px);
+        }
+        .team-member img, .wallet-section img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            border-radius: 50%;
+            border: 2px solid #FFD700;
+        }
+        .team-member p, .wallet-section p {
+            margin: 0;
+            font-size: 14px;
+        }
+        .referral, .wallet-form {
+            background-color: #2A0033;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #FFD700;
+        }
+        .referral p, .wallet-form p {
+            margin: 5px 0;
+        }
+        .mission, .connect-wallet {
+            background-color: #FFD700;
+            color: #2A0033;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .mission:hover, .connect-wallet:hover {
+            background-color: #C0C0C0;
+        }
+        .wallet-form input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            background-color: #1C0022;
+            color: #FFFFFF;
+        }
+        .trade-signal {
+            background-color: #2A0033;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #FFD700;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            background-color: #1C0022;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #FFD700;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .footer button {
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: color 0.3s;
+            flex: 1;
+            max-width: 70px;
+            padding: 5px;
+        }
+        .footer button:hover {
+            color: #FFD700;
+        }
+        .footer button.active {
+            color: #FF69B4;
+        }
+        .footer img {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 5px;
+        }
+        .bond-quote {
+            position: fixed;
+            bottom: 70px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-style: italic;
+            font-size: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        СЕКРЕТНЫЙ АГЕНТ
+        <span>КОД 007</span>
+    </div>
+    <div class="nav">
+        <button class="active">СОЮЗНИКИ</button>
+        <button>ТРЕЙДИНГ</button>
+    </div>
+    <div class="content">
+        <div class="team-member">
+            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=007" alt="Agent 007">
+            <div>
+                <strong>AI_Bond_Bot</strong>
+                <p>0 💎 (Martini: Shaken, not stirred)</p>
+            </div>
+        </div>
+        <div class="referral">
+            <p>ПОИСК ПО АГЕНТСКОМУ КОДУ</p>
+            <p>Союзники: 0</p>
+            <div class="mission" onclick="playMissionSound()">НОВАЯ МИССИЯ: ВЗЛОМАТЬ Q</div>
+        </div>
+        <div class="wallet-section">
+            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=Wallet" alt="Wallet">
+            <div>
+                <p>Подключённый кошелёк: Не подключен</p>
+                <div class="connect-wallet" onclick="showWalletForm()">Подключить кошелёк</div>
+            </div>
+        </div>
+        <div class="wallet-form" id="walletForm" style="display: none;">
+            <p>Введите адрес кошелька или подключите MetaMask:</p>
+            <input type="text" id="walletAddress" placeholder="0x...">
+            <div class="connect-wallet" onclick="connectWallet()">Подтвердить</div>
+        </div>
+        <div class="trade-signal" id="tradeSignal" style="display: none;">
+            <p>Сигнал: LONG $KAS (Binance)</p>
+            <p>Объём: +515%, OI: +4.8%, Ликвидации: $380k</p>
+            <p>Вероятность (ML): 75%</p>
+            <div class="connect-wallet" onclick="executeTrade()">Выполнить сделку</div>
+        </div>
+    </div>
+    <div class="footer">
+        <button class="active">
+            <img src="https://via.placeholder.com/24/FFD700/2A0033?text=Map" alt="Casino Royale Map">
+            <span>Лока</span>
+        </button>
+        <button>
+            <img src="https://via.placeholder.com/24/FFD700/2A0033?text=Car" alt="Aston Martin">
+            <span>Кошелек</span>
+        </button>
+        <button>
+            <img src="https://via.placeholder.com/24/FFD700/2A0033?text=Gun" alt="Walther PPK">
+            <span>Команда</span>
+        </button>
+        <button>
+            <img src="https://via.placeholder.com/24/FFD700/2A0033?text=Mission" alt="Mission Icon">
+            <span>Задания</span>
+        </button>
+        <button>
+            <img src="https://via.placeholder.com/24/FFD700/2A0033?text=Stats" alt="MI6 Reports">
+            <span>Статистика</span>
+        </button>
+    </div>
+    <div class="bond-quote" id="bondQuote">
+        "Имя — Бонд. Джеймс Бонд."
+    </div>
+
+    <script>
+        // Эмуляция Telegram Web App API, если он недоступен
+        let tg = window.Telegram?.WebApp;
+        let startParam = 'default';
+
+        if (!tg) {
+            console.warn('Telegram WebApp API не доступен. Используем эмуляцию.');
+            tg = {
+                ready: () => console.log('Emulated ready'),
+                initDataUnsafe: { start_param: 'emulated_param' },
+                sendData: (data) => {
+                    console.log('Emulated sendData:', data);
+                    return true;
+                }
+            };
+            startParam = tg.initDataUnsafe.start_param;
+        } else {
+            tg.ready();
+            startParam = tg.initDataUnsafe?.start_param || 'default';
+            console.log('Telegram WebApp initialized, start_param:', startParam);
+        }
+
+        // Функция для проигрывания звука миссии
+        function playMissionSound() {
+            const audio = new Audio('https://www.soundboard.com/sb/james_bond_theme');
+            audio.play().catch(() => console.log("Звук не поддерживается в этом окружении"));
+            showBondQuote();
+        }
+
+        // Функция для показа цитаты Бонда
+        function showBondQuote() {
+            const quotes = [
+                "Имя — Бонд. Джеймс Бонд.",
+                "Martini. Взболтать, но не смешивать.",
+                "У меня есть лицензия на убийство... и на торговлю!",
+                "Q, мне нужен гаджет для этой миссии!"
+            ];
+            const quoteElement = document.getElementById('bondQuote');
+            quoteElement.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteElement.style.display = 'block';
+            setTimeout(() => {
+                quoteElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Показать форму подключения кошелька
+        function showWalletForm() {
+            document.getElementById('walletForm').style.display = 'block';
+        }
+
+        // Подключение кошелька
+        function connectWallet() {
+            const walletAddress = document.getElementById('walletAddress').value;
+            if (walletAddress && /^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
+                document.querySelector('.wallet-section p').textContent = `Подключённый кошелёк: ${walletAddress}`;
+                document.getElementById('walletForm').style.display = 'none';
+                alert('Кошелёк успешно подключен! Баланс будет обновлён через API.');
+                tg.sendData(JSON.stringify({ action: 'wallet_connect', address: walletAddress, startParam }));
+                // Здесь можно отправить адрес на сервер
+                fetch('/api/connect-wallet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address: walletAddress, startParam })
+                }).catch(err => console.error('Ошибка подключения:', err));
+            } else {
+                alert('Неверный формат адреса кошелька!');
+            }
+        }
+
+        // Симуляция торгового сигнала
+        function checkTradeSignal() {
+            const mockSignal = {
+                ticker: 'KAS',
+                exchange: 'Binance',
+                volumeIncrease: 515,
+                oiIncrease: 4.8,
+                liquidations: 380000,
+                mlProbability: 75
+            };
+            if (mockSignal.volumeIncrease > 300 && mockSignal.oiIncrease > 2.5 && mockSignal.liquidations > 200000 && mockSignal.mlProbability >= 70) {
+                document.getElementById('tradeSignal').style.display = 'block';
+                document.getElementById('tradeSignal').innerHTML = `
+                    <p>Сигнал: LONG $${mockSignal.ticker} (${mockSignal.exchange})</p>
+                    <p>Объём: +${mockSignal.volumeIncrease}%, OI: +${mockSignal.oiIncrease}%, Ликвидации: $${mockSignal.liquidations}k</p>
+                    <p>Вероятность (ML): ${mockSignal.mlProbability}%</p>
+                    <div class="connect-wallet" onclick="executeTrade()">Выполнить сделку</div>
+                `;
+            }
+        }
+        setInterval(checkTradeSignal, 60000);
+
+        // Выполнение сделки (симуляция)
+        function executeTrade() {
+            const walletAddress = document.querySelector('.wallet-section p').textContent.split(': ')[1];
+            if (walletAddress !== 'Не подключен') {
+                alert('Сделка выполнена! LONG $KAS открыт. (Симуляция)');
+                tg.sendData(JSON.stringify({ action: 'trade', wallet: walletAddress, startParam }));
+            } else {
+                alert('Подключите кошелёк для выполнения сделки!');
+            }
+        }
+
+        // Переключение вкладок в навигации
+        document.querySelectorAll('.nav button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelector('.nav button.active').classList.remove('active');
+                button.classList.add('active');
+                if (button.textContent === 'СОЮЗНИКИ') {
+                    document.querySelector('.content').innerHTML = `
+                        <div class="team-member">
+                            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=007" alt="Agent 007">
+                            <div>
+                                <strong>AI_Bond_Bot</strong>
+                                <p>0 💎 (Martini: Shaken, not stirred)</p>
+                            </div>
+                        </div>
+                        <div class="referral">
+                            <p>ПОИСК ПО АГЕНТСКОМУ КОДУ</p>
+                            <p>Союзники: 0</p>
+                            <div class="mission" onclick="playMissionSound()">НОВАЯ МИССИЯ: ВЗЛОМАТЬ Q</div>
+                        </div>
+                        <div class="wallet-section">
+                            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=Wallet" alt="Wallet">
+                            <div>
+                                <p>Подключённый кошелёк: Не подключен</p>
+                                <div class="connect-wallet" onclick="showWalletForm()">Подключить кошелёк</div>
+                            </div>
+                        </div>
+                        <div class="wallet-form" id="walletForm" style="display: none;">
+                            <p>Введите адрес кошелька или подключите MetaMask:</p>
+                            <input type="text" id="walletAddress" placeholder="0x...">
+                            <div class="connect-wallet" onclick="connectWallet()">Подтвердить</div>
+                        </div>
+                    `;
+                } else if (button.textContent === 'ТРЕЙДИНГ') {
+                    document.querySelector('.content').innerHTML = `
+                        <div class="trade-signal" id="tradeSignal" style="display: none;">
+                            <p>Сигнал: Ожидание...</p>
+                        </div>
+                        <div class="wallet-section">
+                            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=Wallet" alt="Wallet">
+                            <div>
+                                <p>Подключённый кошелёк: Не подключен</p>
+                                <div class="connect-wallet" onclick="showWalletForm()">Подключить кошелёк</div>
+                            </div>
+                        </div>
+                        <div class="wallet-form" id="walletForm" style="display: none;">
+                            <p>Введите адрес кошелька или подключите MetaMask:</p>
+                            <input type="text" id="walletAddress" placeholder="0x...">
+                            <div class="connect-wallet" onclick="connectWallet()">Подтвердить</div>
+                        </div>
+                    `;
+                    checkTradeSignal();
+                }
+            });
+        });
+
+        // Переключение разделов в футере
+        document.querySelectorAll('.footer button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelector('.footer button.active').classList.remove('active');
+                button.classList.add('active');
+                const section = button.textContent;
+                let content = '';
+                if (section === 'Команда') {
+                    content = `
+                        <div class="team-member">
+                            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=007" alt="Agent 007">
+                            <div>
+                                <strong>AI_Bond_Bot</strong>
+                                <p>0 💎 (Martini: Shaken, not stirred)</p>
+                            </div>
+                        </div>
+                        <div class="referral">
+                            <p>ПОИСК ПО АГЕНТСКОМУ КОДУ</p>
+                            <p>Союзники: 0</p>
+                            <div class="mission" onclick="playMissionSound()">НОВАЯ МИССИЯ: ВЗЛОМАТЬ Q</div>
+                        </div>
+                        <div class="wallet-section">
+                            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=Wallet" alt="Wallet">
+                            <div>
+                                <p>Подключённый кошелёк: Не подключен</p>
+                                <div class="connect-wallet" onclick="showWalletForm()">Подключить кошелёк</div>
+                            </div>
+                        </div>
+                        <div class="wallet-form" id="walletForm" style="display: none;">
+                            <p>Введите адрес кошелька или подключите MetaMask:</p>
+                            <input type="text" id="walletAddress" placeholder="0x...">
+                            <div class="connect-wallet" onclick="connectWallet()">Подтвердить</div>
+                        </div>
+                    `;
+                } else if (section === 'Кошелек') {
+                    content = `
+                        <div class="wallet-section">
+                            <img src="https://via.placeholder.com/40/FFD700/2A0033?text=Wallet" alt="Wallet">
+                            <div>
+                                <p>Подключённый кошелёк: Не подключен</p>
+                                <div class="connect-wallet" onclick="showWalletForm()">Подключить кошелёк</div>
+                            </div>
+                        </div>
+                        <div class="wallet-form" id="walletForm" style="display: none;">
+                            <p>Введите адрес кошелька или подключите MetaMask:</p>
+                            <input type="text" id="walletAddress" placeholder="0x...">
+                            <div class="connect-wallet" onclick="connectWallet()">Подтвердить</div>
+                        </div>
+                        <p>Баланс: 0 ETH (Aston Martin на ремонте)</p>
+                    `;
+                } else if (section === 'Задания') {
+                    content = `<p>Миссия: Проникнуть в логово SPECTRE</p>`;
+                } else if (section === 'Статистика') {
+                    content = `<p>Отчеты агента: 0 успешных миссий</p>`;
+                } else if (section === 'Лока') {
+                    content = `<p>Карта миссий: Казино Рояль</p>`;
+                }
+                document.querySelector('.content').innerHTML = content;
+            });
+        });
+
+        // Пример простой логики рефералов
+        function updateReferrals() {
+            const referralCount = 0;
+            const referralElement = document.querySelector('.referral p:last-child');
+            if (referralElement) {
+                referralElement.textContent = `Союзники: ${referralCount}`;
+            }
+        }
+        updateReferrals();
+    </script>
+</body>
+  </html>
