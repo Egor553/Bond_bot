@@ -99,17 +99,98 @@
         }
         .collection {
             background: #00d4ff;
-            color: #0d1b2a;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 1em;
-            width: 100%;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BondAI</title>
+    <style>
+        body {
+            background-color: #0d1b2a;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow-y: auto;
         }
-        .collection-icon {
-            margin-right: 10px;
+        .container {
+            background: #1b263b;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px;
+            background: #0d1b2a;
+            border-bottom: 2px solid #00d4ff;
+        }
+        .logo {
+            font-size: 1.5em;
+            color: #e9d8a6;
+        }
+        .agent {
+            font-size: 0.8em;
+            color: #fff;
+        }
+        .section {
+            margin: 10px 0;
+            padding: 10px;
+            background: #0d1b2a;
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+        }
+        .button {
+            background: #00d4ff;
+            color: #0d1b2a;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px 0;
+            width: 100%;
+        }
+        .button.purple {
+            background: #6b48ff;
+        }
+        .button:hover {
+            opacity: 0.8;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .stat-item {
+            background: #1b263b;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .progress {
+            background: #6b48ff;
+            height: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .income-list {
+            text-align: left;
+            padding-left: 10px;
+        }
+        .income-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -119,23 +200,34 @@
             <span class="agent">007</span>
             <span class="logo">BondAI</span>
         </div>
-        <div class="buttons-top">
-            <button class="button">СОЮЗНИКИ</button>
-            <button class="button">ТРЕЙДИНГ</button>
+        <div class="stats">
+            <div class="stat-item">Наград: 0.3993 USDT</div>
+            <div class="stat-item">Всего: 16571.6171 USDT</div>
         </div>
-        <div class="bot-section">
-            <div class="bot-name">AI_Bond_Bot</div>
-            <div class="bot-desc">(Martini Shaken, not stirred)</div>
+        <div class="section">
+            <h3>Партнеры</h3>
+            <div class="progress" style="width: 17%;"></div>
+            Всего: 17/100<br>
+            Личные: 10/3
         </div>
-        <div class="auth">
-            ПОЛУЧИТЬ ПО АГЕНТСКОМУ КОДУ<br>
-            СОЮЗНИКИ: 0
+        <button class="button purple" id="createProfile">Создать профиль</button>
+        <button class="button purple">Партнеры</button>
+        <button class="button purple">Приглашения</button>
+        <button class="button purple">Награды</button>
+        <div class="section">
+            <h3>Доходы</h3>
+            <div class="income-list">
+                <div class="income-item">20 мая 2025: +0.3993 USDT</div>
+                <div class="income-item">19 мая 2025: +13.8037 USDT</div>
+                <div class="income-item">18 мая 2025: -1.4679 USDT</div>
+            </div>
         </div>
-        <button class="mission">НОВАЯ МИССИЯ: ВЗЛОМАТЬ Q</button>
-        <div>
-            <span class="collection-icon">📷</span>
-            Подключенный кошелек:
-            <button class="collection">ПОДКЛЮЧИТЬ КОШЕЛЕК</button>
+        <button class="button">Подключить кошелек</button>
+        <div class="section">
+            <h3>Настройки</h3>
+            <button class="button">Светлая</button>
+            <button class="button">Системная</button>
+            <button class="button purple">Темная</button>
         </div>
     </div>
 
@@ -145,13 +237,28 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        document.querySelectorAll('.button, .mission, .collection').forEach(button => {
-            button.addEventListener('click', () => {
-                tg.showPopup({
-                    message: 'Функция в разработке',
-                    buttons: [{ text: 'OK', type: 'default' }]
-                });
+        document.getElementById('createProfile').addEventListener('click', () => {
+            tg.showPopup({
+                message: 'Профиль будет создан при первом запуске. Хотите продолжить?',
+                buttons: [
+                    { text: 'Да', type: 'default', callback: () => {
+                        // Здесь можно добавить логику создания профиля
+                        tg.showPopup({ message: 'Профиль создан!', buttons: [{ text: 'OK', type: 'default' }] });
+                    }},
+                    { text: 'Нет', type: 'cancel' }
+                ]
             });
+        });
+
+        document.querySelectorAll('.button').forEach(button => {
+            if (button.id !== 'createProfile') {
+                button.addEventListener('click', () => {
+                    tg.showPopup({
+                        message: 'Функция в разработке',
+                        buttons: [{ text: 'OK', type: 'default' }]
+                    });
+                });
+            }
         });
     </script>
 </body>
