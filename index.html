@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BondAI Bot</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0A0F1A;
+            color: #00D4FF;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
+        .header {
+            background: #16213E;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 2px solid #FFD700;
+            position: relative;
+        }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .header .nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .header .nav button {
+            background: #0F3460;
+            border: 1px solid #00D4FF;
+            color: #00D4FF;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .header .nav button:hover {
+            background: #00D4FF;
+            color: #0A0F1A;
+        }
+        .content {
+            padding: 15px;
+            height: calc(100% - 90px);
+            overflow-y: auto;
+            background: url('https://via.placeholder.com/300x500/0A0F1A/00D4FF?text=Chart') no-repeat right bottom;
+            background-size: contain;
+        }
+        .section {
+            background: #16213E;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #0F3460;
+            border-radius: 5px;
+            position: relative;
+        }
+        .section .info {
+            margin-bottom: 10px;
+        }
+        .section button {
+            background: #0F3460;
+            border: 1px solid #E94560;
+            color: #FFFFFF;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .section button:hover {
+            background: #E94560;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            background: #0F3460;
+            padding: 5px 0;
+            border-top: 1px solid #E94560;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .footer button {
+            background: none;
+            border: none;
+            color: #00D4FF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .footer button img {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 2px;
+        }
+        .footer button.active {
+            color: #FFD700;
+        }
+        .agent {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 100px;
+            background: url('https://via.placeholder.com/50x100/00D4FF/0A0F1A?text=Agent') no-repeat;
+            background-size: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">007 <span style="color: #00D4FF;">BondAI</span></div>
+        <div class="nav">
+            <button onclick="showSection('Союзники')">Союзники</button>
+            <button onclick="showSection('Трейдинг')">Трейдинг</button>
+        </div>
+    </div>
+    <div class="content" id="content">
+        <div class="section">
+            <div class="agent"></div>
+            <div class="info">
+                <strong>AI-Bond_Bot</strong><br>
+                (Martini Shaken, not stirred)
+            </div>
+            <div class="info">
+                <strong>ПОИСК ПО АГЕНТСКОМУ КОДУ</strong><br>
+                Союзники: 0
+            </div>
+            <button onclick="startMission()">НОВАЯ МИССИЯ: ВЗЛОМАТЬ Q</button>
+            <div class="info">
+                <strong>Подключённый кошелёк:</strong><br>
+                <button onclick="connectWallet()">Подключить кошелёк</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <button class="active" onclick="showSection('Торговля')">
+            <img src="https://via.placeholder.com/20?text=🤖" alt="Trading">
+            <span>Торговля</span>
+        </button>
+        <button onclick="showSection('Настройки')">
+            <img src="https://via.placeholder.com/20?text=⚙️" alt="Settings">
+            <span>Настройки</span>
+        </button>
+        <button onclick="showSection('Статистика')">
+            <img src="https://via.placeholder.com/20?text=📊" alt="Stats">
+            <span>Статистика</span>
+        </button>
+        <button onclick="showSection('Рефералы')">
+            <img src="https://via.placeholder.com/20?text=👥" alt="Referrals">
+            <span>Рефералы</span>
+        </button>
+        <button onclick="showSection('Подписка')">
+            <img src="https://via.placeholder.com/20?text=💳" alt="Subscription">
+            <span>Подписка</span>
+        </button>
+    </div>
+
+    <script>
+        let userId = 'user007';
+        let tradingActive = false;
+        let subscriptionEnd = '2025-05-19';
+        let walletBalance = 0.0;
+        let trades = [];
+        let signals = [];
+        let referralEarnings = [];
+        const SUBSCRIPTION_COST = 140;
+        const REFERRAL_DISTRIBUTION = [0.05, 0.03, 0.02, 0.01, 0.01, 0.01];
+        const PROFIT_FEE = 0.15;
+        const PROFIT_REFERRAL_DISTRIBUTION = [0.04, 0.03, 0.02, 0.02, 0.01, 0.01];
+        let settings = {
+            strategy: 'DCA',
+            coin: 'BTC',
+            volume: 50,
+            dca: true,
+            profitTarget: 3
+        };
+
+        const mlp = {
+            predict_proba: (features) => [0.3, 0.7, 0.0]
+        };
+
+        const bybit = {
+            getTicker: (ticker) => ({ last_price: Math.random() * 50000 }),
+            placeOrder: (params) => ({ orderId: '12345' })
+        };
+
+        function showSection(section) {
+            document.querySelector('.footer button.active').classList.remove('active');
+            document.querySelector(`.footer button[onclick="showSection('${section}')"]`).classList.add('active');
+            let content = '';
+            if (section === 'Торговля') {
+                content = `
+                    <div class="section">
+                        <div class="agent"></div>
+                        <div class="info">
+                            <strong>Торговля</strong><br>
+                            Статус: ${tradingActive ? 'Включен' : 'Выключен'}
+                        </div>
+                        <button onclick="toggleTrading()">${tradingActive ? 'Выключить' : 'Включить'}</button>
+                    </div>
+                    <div class="section">
+                        <div class="info">
+                            <strong>Последний сигнал</strong><br>
+                            <span id="last-signal">Ожидание сигнала...</span>
+                        </div>
+                    </div>
+                `;
+            } else if (section === 'Настройки') {
+                content = `
+                    <div class="section">
+                        <div class="agent"></div>
+                        <div class="info"><strong>Стратегия</strong><br>${settings.strategy}</div>
+                        <button onclick="updateSettings('strategy', '${settings.strategy === 'DCA' ? 'Grid' : 'DCA'}')">Сменить</button>
+                    </div>
+                    <div class="section">
+                        <div class="info"><strong>Монета</strong><br>${settings.coin}</div>
+                        <button onclick="updateSettings('coin', prompt('Введите монету (BTC/ETH):'))">Сменить</button>
+                    </div>
+                    <div class="section">
+                        <div class="info"><strong>Объём ($)</strong><br>${settings.volume}</div>
+                        <button onclick="updateSettings('volume', prompt('Введите объём ($):'))">Сменить</button>
+                    </div>
+                    <div class="section">
+                        <div class="info"><strong>DCA</strong><br>${settings.dca ? 'Включено' : 'Выключено'}</div>
+                        <button onclick="updateSettings('dca', ${!settings.dca})">Сменить</button>
+                    </div>
+                    <div class="section">
+                        <div class="info"><strong>Цель прибыли (%)</strong><br>${settings.profitTarget}</div>
+                        <button onclick="updateSettings('profitTarget', prompt('Введите цель прибыли (%):'))">Сменить</button>
+                    </div>
+                `;
+            } else if (section === 'Статистика') {
+                const totalTrades = trades.length;
+                const totalProfit = trades.reduce((sum, trade) => sum + (trade.profit || 0), 0);
+                const todayProfit = trades.filter(t => t.timestamp.startsWith(new Date().toISOString().split('T')[0]))
+                                         .reduce((sum, trade) => sum + (trade.profit || 0), 0);
+                const lastTrade = trades[trades.length - 1];
+                content = `
+                    <div class="section">
+                        <div class="agent"></div>
+                        <div class="info">
+                            <strong>Статистика</strong><br>
+                            Кол-во сделок: ${totalTrades}<br>
+                            Прибыль за сегодня: $${todayProfit.toFixed(2)}<br>
+                            Общая прибыль: $${totalProfit.toFixed(2)}<br>
+                            ${lastTrade ? `Последняя сделка: $${lastTrade.ticker} → +${((lastTrade.profit / (lastTrade.entryPrice * lastTrade.amount)) * 100).toFixed(2)}%` : ''}
+                        </div>
+                    </div>
+                `;
+            } else if (section === 'Рефералы') {
+                const totalEarnings = referralEarnings.reduce((sum, e) => sum + e.amount, 0);
+                const levelEarnings = {};
+                referralEarnings.forEach(e => {
+                    levelEarnings[e.level] = (levelEarnings[e.level] || 0) + e.amount;
+                });
+                const earningsText = Object.entries(levelEarnings).map(([level, amount]) => `Уровень ${level}: $${amount.toFixed(2)}`).join('<br>');
+                content = `
+                    <div class="section">
+                        <div class="agent"></div>
+                        <div class="info">
+                            <strong>Рефералы</strong><br>
+                            Ваша ссылка: https://example.com?ref=${userId}<br>
+                            Кол-во приглашённых: 8<br>
+                            Доход по уровням:<br>${earningsText}<br>
+                            Всего: $${totalEarnings.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            } else if (section === 'Подписка') {
+                content = `
+                    <div class="section">
+                        <div class="agent"></div>
+                        <div class="info">
+                            <strong>Подписка</strong><br>
+                            Статус: ${new Date(subscriptionEnd) > new Date() ? 'Активна ✅' : 'Истекла ❌'}<br>
+                            Истекает: ${subscriptionEnd}<br>
+                            Цена: $${SUBSCRIPTION_COST}/год
+                        </div>
+                        <button onclick="renewSubscription()">Продлить</button>
+                    </div>
+                `;
+            }
+            document.getElementById('content').innerHTML = content;
+        }
+
+        function updateSettings(key, value) {
+            if (value !== null && value !== '') {
+                settings[key] = key === 'volume' || key === 'profitTarget' ? parseFloat(value) : value;
+                showSection('Настройки');
+            }
+        }
+
+        function toggleTrading() {
+            if (new Date(subscriptionEnd) < new Date()) {
+                alert('Подписка истекла! Пожалуйста, продлить.');
+                return;
+            }
+            tradingActive = !tradingActive;
+            showSection('Торговля');
+            if (tradingActive) startTrading();
+        }
+
+        function parseSignals() {
+            const signal = {
+                timestamp: new Date().toISOString(),
+                exchange: 'Bybit',
+                ticker: settings.coin,
+                signal_type: Math.random() > 0.5 ? 'Volume' : 'OI',
+                value: Math.random() * 1000,
+                currency: null
+            };
+            signals.push(signal);
+            return signal;
+        }
+
+        function checkEntryConditions(ticker) {
+            const timeWindow = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+            const recentSignals = signals.filter(s => s.ticker === ticker && s.timestamp > timeWindow);
+            let volume = false, oi = false, liq = false, dumpBuyback = false;
+            recentSignals.forEach(s => {
+                if (s.signal_type === 'Volume' && s.value > 300) volume = true;
+                if (s.signal_type === 'OI' && s.value > 2.5) oi = true;
+                if (s.signal_type === 'Liquidation' && s.currency === 'SHORT' && s.value > 200000) liq = true;
+                if (s.signal_type === 'Dump/Buyback') dumpBuyback = true;
+            });
+            if (volume && oi && (liq || dumpBuyback)) {
+                const features = [volume ? 1 : 0, oi ? 1 : 0, liq ? 1 : 0, dumpBuyback ? 1 : 0, 0];
+                const prediction = mlp.predict_proba([features]);
+                return prediction[0][1] >= 0.7;
+            }
+            return false;
+        }
+
+        function executeTrade(ticker) {
+            const price = bybit.getTicker(ticker).last_price;
+            const amount = settings.volume / price;
+            const targetPrice = price * (1 + settings.profitTarget / 100);
+            const trade = {
+                timestamp: new Date().toISOString(),
+                ticker,
+                entryPrice: price,
+                targetPrice,
+                amount,
+                profit: 0,
+                status: 'open',
+                dcaCount: 0
+            };
+            trades.push(trade);
+            bybit.placeOrder({ symbol: `${ticker}USDT`, side: 'Buy', qty: amount, type: 'market' });
+            document.getElementById('last-signal').textContent = `🚀 Вход в LONG: $${ticker} (Bybit)\nЦена: $${price.toFixed(2)}\nЦель: $${targetPrice.toFixed(2)}`;
+        }
+
+        function checkDCA() {
+            trades.forEach(trade => {
+                if (trade.status === 'open' && trade.dcaCount < 3) {
+                    const price = bybit.getTicker(trade.ticker).last_price;
+                    if (price <= trade.entryPrice * 0.97) {
+                        if (checkEntryConditions(trade.ticker)) {
+                            const newAmount = trade.amount;
+                            bybit.placeOrder({ symbol: `${trade.ticker}USDT`, side: 'Buy', qty: newAmount, type: 'market' });
+                            trade.entryPrice = (trade.entryPrice * trade.amount + price * newAmount) / (trade.amount + newAmount);
+                            trade.amount += newAmount;
+                            trade.dcaCount += 1;
+                            document.getElementById('last-signal').textContent = `🔄 DCA для $${trade.ticker}: усреднение #${trade.dcaCount}`;
+                        }
+                    }
+                }
+            });
+        }
+
+        function checkProfits() {
+            trades.forEach(trade => {
+                if (trade.status === 'open') {
+                    const price = bybit.getTicker(trade.ticker).last_price;
+                    if (price >= trade.targetPrice) {
+                        trade.profit = (price - trade.entryPrice) * trade.amount;
+                        trade.status = 'closed';
+                        bybit.placeOrder({ symbol: `${trade.ticker}USDT`, side: 'Sell', qty: trade.amount, type: 'market' });
+                        document.getElementById('last-signal').textContent = `✅ Прибыль: +${((trade.profit / (trade.entryPrice * trade.amount)) * 100).toFixed(2)}% ($${trade.profit.toFixed(2)})`;
+                        distributeProfit(trade.profit);
+                    }
+                }
+            });
+        }
+
+        function distributeProfit(profit) {
+            const fee = profit * PROFIT_FEE;
+            const referralShare = fee * 0.13;
+            const referrals = [{ id: 'ref1', level: 1 }, { id: 'ref2', level: 2 }];
+            referrals.forEach((ref, index) => {
+                if (index < REFERRAL_DISTRIBUTION.length) {
+                    const amount = referralShare * PROFIT_REFERRAL_DISTRIBUTION[index];
+                    referralEarnings.push({ level: ref.level, amount });
+                }
+            });
+        }
+
+        function renewSubscription() {
+            subscriptionEnd = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            alert('Подписка продлена на год!');
+            showSection('Подписка');
+        }
+
+        function startTrading() {
+            setInterval(() => {
+                if (tradingActive) {
+                    parseSignals();
+                    if (checkEntryConditions(settings.coin)) {
+                        executeTrade(settings.coin);
+                    }
+                    checkDCA();
+                    checkProfits();
+                }
+            }, 60000);
+        }
+
+        function startMission() {
+            alert('Миссия запущена! Включаю торговлю...');
+            toggleTrading();
+        }
+
+        function connectWallet() {
+            alert('Подключение кошелька... (эмуляция)');
+            walletBalance = 1000; // Эмуляция
+            showSection('Трейдинг');
+        }
+
+        showSection('Торговля');
+    </script>
+</body>
+          </html>
