@@ -7,107 +7,6 @@
     <style>
         body {
             background-color: #0d1b2a;
-            color: #00d4ff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .container {
-            background: #1b263b;
-            border: 2px solid #00d4ff;
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 0 10px #00d4ff;
-        }
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #0d1b2a;
-            padding: 5px;
-            border-bottom: 2px solid #00d4ff;
-        }
-        .logo {
-            font-size: 1.8em;
-            color: #e9d8a6;
-            margin-left: 10px;
-        }
-        .agent {
-            font-size: 0.8em;
-            color: #fff;
-        }
-        .buttons-top {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-        }
-        .button {
-            background: #00d4ff;
-            color: #0d1b2a;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            flex: 1;
-            margin: 0 5px;
-        }
-        .button:hover {
-            opacity: 0.8;
-        }
-        .bot-section {
-            margin: 10px 0;
-            text-align: left;
-            padding: 10px;
-            background: #0d1b2a;
-            border: 1px solid #00d4ff;
-            border-radius: 5px;
-        }
-        .bot-name {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-        .bot-desc {
-            font-size: 0.9em;
-            color: #e0e0e0;
-        }
-        .auth {
-            background: #e9d8a6;
-            color: #0d1b2a;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 0.9em;
-        }
-        .mission {
-            background: #e9d8a6;
-            color: #0d1b2a;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 1em;
-            width: 100%;
-            border: none;
-            cursor: pointer;
-        }
-        .collection {
-            background: #00d4ff;
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BondAI</title>
-    <style>
-        body {
-            background-color: #0d1b2a;
             color: #e0e0e0;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -192,6 +91,21 @@
             justify-content: space-between;
             margin: 5px 0;
         }
+        #profileCreation {
+            display: block;
+        }
+        #mainInterface {
+            display: none;
+        }
+        .input-field {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            background: #0d1b2a;
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+            color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -200,34 +114,46 @@
             <span class="agent">007</span>
             <span class="logo">BondAI</span>
         </div>
-        <div class="stats">
-            <div class="stat-item">Наград: 0.3993 USDT</div>
-            <div class="stat-item">Всего: 16571.6171 USDT</div>
-        </div>
-        <div class="section">
-            <h3>Партнеры</h3>
-            <div class="progress" style="width: 17%;"></div>
-            Всего: 17/100<br>
-            Личные: 10/3
-        </div>
-        <button class="button purple" id="createProfile">Создать профиль</button>
-        <button class="button purple">Партнеры</button>
-        <button class="button purple">Приглашения</button>
-        <button class="button purple">Награды</button>
-        <div class="section">
-            <h3>Доходы</h3>
-            <div class="income-list">
-                <div class="income-item">20 мая 2025: +0.3993 USDT</div>
-                <div class="income-item">19 мая 2025: +13.8037 USDT</div>
-                <div class="income-item">18 мая 2025: -1.4679 USDT</div>
+
+        <!-- Экран создания профиля -->
+        <div id="profileCreation">
+            <div class="section">
+                <h3>Создание профиля</h3>
+                <input type="text" id="username" class="input-field" placeholder="Введите имя пользователя">
+                <button class="button purple" id="submitProfile">Создать</button>
             </div>
         </div>
-        <button class="button">Подключить кошелек</button>
-        <div class="section">
-            <h3>Настройки</h3>
-            <button class="button">Светлая</button>
-            <button class="button">Системная</button>
-            <button class="button purple">Темная</button>
+
+        <!-- Основной интерфейс -->
+        <div id="mainInterface">
+            <div class="stats">
+                <div class="stat-item">Наград: 0.3993 USDT</div>
+                <div class="stat-item">Всего: 16571.6171 USDT</div>
+            </div>
+            <div class="section">
+                <h3>Партнеры</h3>
+                <div class="progress" style="width: 17%;"></div>
+                Всего: 17/100<br>
+                Личные: 10/3
+            </div>
+            <button class="button purple">Партнеры</button>
+            <button class="button purple">Приглашения</button>
+            <button class="button purple">Награды</button>
+            <div class="section">
+                <h3>Доходы</h3>
+                <div class="income-list">
+                    <div class="income-item">20 мая 2025: +0.3993 USDT</div>
+                    <div class="income-item">19 мая 2025: +13.8037 USDT</div>
+                    <div class="income-item">18 мая 2025: -1.4679 USDT</div>
+                </div>
+            </div>
+            <button class="button">Подключить кошелек</button>
+            <div class="section">
+                <h3>Настройки</h3>
+                <button class="button">Светлая</button>
+                <button class="button">Системная</button>
+                <button class="button purple">Темная</button>
+            </div>
         </div>
     </div>
 
@@ -237,28 +163,42 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        document.getElementById('createProfile').addEventListener('click', () => {
-            tg.showPopup({
-                message: 'Профиль будет создан при первом запуске. Хотите продолжить?',
-                buttons: [
-                    { text: 'Да', type: 'default', callback: () => {
-                        // Здесь можно добавить логику создания профиля
-                        tg.showPopup({ message: 'Профиль создан!', buttons: [{ text: 'OK', type: 'default' }] });
-                    }},
-                    { text: 'Нет', type: 'cancel' }
-                ]
-            });
-        });
+        const profileCreation = document.getElementById('profileCreation');
+        const mainInterface = document.getElementById('mainInterface');
+        const submitProfile = document.getElementById('submitProfile');
+        const usernameInput = document.getElementById('username');
 
-        document.querySelectorAll('.button').forEach(button => {
-            if (button.id !== 'createProfile') {
-                button.addEventListener('click', () => {
-                    tg.showPopup({
-                        message: 'Функция в разработке',
-                        buttons: [{ text: 'OK', type: 'default' }]
-                    });
+        // Проверка, создан ли профиль (для демонстрации используем localStorage)
+        if (localStorage.getItem('profileCreated')) {
+            profileCreation.style.display = 'none';
+            mainInterface.style.display = 'block';
+        }
+
+        submitProfile.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            if (username) {
+                tg.showPopup({
+                    message: `Профиль ${username} создан!`,
+                    buttons: [{ text: 'OK', type: 'default' }]
+                });
+                localStorage.setItem('profileCreated', 'true');
+                profileCreation.style.display = 'none';
+                mainInterface.style.display = 'block';
+            } else {
+                tg.showPopup({
+                    message: 'Пожалуйста, введите имя пользователя',
+                    buttons: [{ text: 'OK', type: 'default' }]
                 });
             }
+        });
+
+        document.querySelectorAll('#mainInterface .button').forEach(button => {
+            button.addEventListener('click', () => {
+                tg.showPopup({
+                    message: 'Функция в разработке',
+                    buttons: [{ text: 'OK', type: 'default' }]
+                });
+            });
         });
     </script>
 </body>
