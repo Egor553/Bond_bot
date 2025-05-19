@@ -6,7 +6,7 @@
     <title>BondAI</title>
     <style>
         body {
-            background-color: #1a1a2e;
+            background-color: #0d1b2a;
             color: #00d4ff;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -14,88 +14,145 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             height: 100vh;
+            overflow: hidden;
         }
         .container {
-            background: #16213e;
+            background: #1b263b;
             border: 2px solid #00d4ff;
             border-radius: 10px;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
+            width: 90%;
+            max-width: 400px;
             box-shadow: 0 0 10px #00d4ff;
         }
         .header {
-            font-size: 2.5em;
-            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d1b2a;
+            padding: 5px;
+            border-bottom: 2px solid #00d4ff;
         }
         .logo {
-            font-size: 1.5em;
-            color: #00ffcc;
+            font-size: 1.8em;
+            color: #e9d8a6;
+            margin-left: 10px;
         }
-        .buttons {
+        .agent {
+            font-size: 0.8em;
+            color: #fff;
+        }
+        .buttons-top {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            justify-content: space-between;
+            margin: 10px 0;
         }
         .button {
             background: #00d4ff;
-            color: #1a1a2e;
-            padding: 10px 20px;
+            color: #0d1b2a;
+            padding: 8px 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1.2em;
-            transition: background 0.3s;
-        }
-        .button.pink {
-            background: #ff00ff;
+            font-size: 1em;
+            flex: 1;
+            margin: 0 5px;
         }
         .button:hover {
             opacity: 0.8;
         }
-        .bot-info {
-            margin: 20px 0;
-            font-size: 1.1em;
+        .bot-section {
+            margin: 10px 0;
+            text-align: left;
+            padding: 10px;
+            background: #0d1b2a;
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+        }
+        .bot-name {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        .bot-desc {
+            font-size: 0.9em;
+            color: #e0e0e0;
         }
         .auth {
-            background: #ffd700;
-            color: #1a1a2e;
+            background: #e9d8a6;
+            color: #0d1b2a;
             padding: 10px;
             border-radius: 5px;
-            margin-top: 20px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .mission {
+            background: #e9d8a6;
+            color: #0d1b2a;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 100%;
+            border: none;
+            cursor: pointer;
         }
         .collection {
             background: #00d4ff;
-            color: #1a1a2e;
+            color: #0d1b2a;
             padding: 10px;
             border-radius: 5px;
+            font-size: 1em;
+            width: 100%;
+            border: none;
+            cursor: pointer;
             margin-top: 10px;
+        }
+        .collection-icon {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <span class="agent">007</span>
             <span class="logo">BondAI</span>
         </div>
-        <div class="buttons">
-            <button class="button pink">СОЮЗНИКИ</button>
-            <button class="button">AI_Bond_bot</button>
-            <button class="button">GRIT bot</button>
-            <button class="button">DCA bot</button>
-            <button class="button pink">ДОХОД</button>
-            <button class="button">НАСТРОЙКИ</button>
+        <div class="buttons-top">
+            <button class="button">СОЮЗНИКИ</button>
+            <button class="button">ТРЕЙДИНГ</button>
         </div>
-        <div class="bot-info">
-            AI_Bond_Bot (Martini Shaken, not stirred)
+        <div class="bot-section">
+            <div class="bot-name">AI_Bond_Bot</div>
+            <div class="bot-desc">(Martini Shaken, not stirred)</div>
         </div>
         <div class="auth">
             ПОЛУЧИТЬ ПО АГЕНТСКОМУ КОДУ<br>
             СОЮЗНИКИ: 0
         </div>
-        <button class="button auth">НОВАЯ МИССИЯ: ВЗЛОМАТЬ Q</button>
-        <button class="button collection">ПОДКЛЮЧИТЬ КОЛЛЕКЦИЮ</button>
+        <button class="mission">НОВАЯ МИССИЯ: ВЗЛОМАТЬ Q</button>
+        <div>
+            <span class="collection-icon">📷</span>
+            Подключенный кошелек:
+            <button class="collection">ПОДКЛЮЧИТЬ КОШЕЛЕК</button>
+        </div>
     </div>
+
+    <!-- Подключение Telegram Web App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+
+        document.querySelectorAll('.button, .mission, .collection').forEach(button => {
+            button.addEventListener('click', () => {
+                tg.showPopup({
+                    message: 'Функция в разработке',
+                    buttons: [{ text: 'OK', type: 'default' }]
+                });
+            });
+        });
+    </script>
 </body>
 </html>
