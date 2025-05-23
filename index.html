@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BondAI</title>
+    <title>AI Bond Bot</title>
     <style>
         body {
-            background-color: #0d1b2a;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
             color: #e0e0e0;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,190 +16,333 @@
             align-items: center;
             height: 100vh;
             overflow-y: auto;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .container {
-            background: #1b263b;
-            border: 2px solid #00d4ff;
-            border-radius: 10px;
-            padding: 10px;
             width: 90%;
             max-width: 400px;
             text-align: center;
+            animation: slideUp 0.7s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 5px;
-            background: #0d1b2a;
-            border-bottom: 2px solid #00d4ff;
+            padding: 10px;
+            background: #1b263b;
+            border: 3px solid #00d4ff;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 0 10px #00d4ff;
+            transition: all 0.3s ease;
+        }
+        .header:hover {
+            background: #2a4066;
+            transform: scale(1.02);
         }
         .logo {
-            font-size: 1.5em;
+            font-size: 1.8em;
             color: #e9d8a6;
+            text-shadow: 0 0 5px #e9d8a6;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         .agent {
-            font-size: 0.8em;
+            font-size: 0.9em;
             color: #fff;
+            animation: blink 1s infinite;
         }
-        .section {
-            margin: 10px 0;
-            padding: 10px;
-            background: #0d1b2a;
-            border: 1px solid #00d4ff;
-            border-radius: 5px;
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .content {
+            background: #1b263b;
+            border: 3px solid #00d4ff;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            padding: 15px;
+            animation: fadeInContent 0.6s ease-in-out;
+        }
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 15px 0;
         }
         .button {
             background: #00d4ff;
             color: #0d1b2a;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1em;
-            margin: 5px 0;
-            width: 100%;
+            flex: 1 1 calc(50% - 10px);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .button.purple {
+        .button::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
             background: #6b48ff;
+            transition: all 0.3s ease;
+        }
+        .button:hover::after {
+            width: 100%;
+            left: 0;
         }
         .button:hover {
-            opacity: 0.8;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-        }
-        .stat-item {
-            background: #1b263b;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-        .progress {
             background: #6b48ff;
-            height: 10px;
-            border-radius: 5px;
-            margin: 5px 0;
+            transform: translateY(-3px);
         }
-        .income-list {
+        .section {
+            background: #0d1b2a;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
             text-align: left;
-            padding-left: 10px;
+            animation: bounceIn 0.8s ease-out;
         }
-        .income-item {
+        @keyframes bounceIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .stats-list, .signals-list, .trades-list {
+            text-align: left;
+            padding-left: 15px;
+        }
+        .stat-item, .signal-item, .trade-item {
             display: flex;
             justify-content: space-between;
-            margin: 5px 0;
+            margin: 8px 0;
+            animation: fadeInItem 0.5s ease-in;
         }
-        #profileCreation {
-            display: block;
+        @keyframes fadeInItem {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        #mainInterface {
+        .loading {
+            border: 4px solid #1b263b;
+            border-top: 4px solid #00d4ff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
             display: none;
         }
-        .input-field {
-            width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            background: #0d1b2a;
-            border: 1px solid #00d4ff;
-            border-radius: 5px;
-            color: #e0e0e0;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <span class="agent">007</span>
-            <span class="logo">BondAI</span>
+            <span class="agent">AI_Bond_Bot</span>
+            <span class="logo">AI Bond Bot</span>
         </div>
-
-        <!-- Экран создания профиля -->
-        <div id="profileCreation">
-            <div class="section">
-                <h3>Создание профиля</h3>
-                <input type="text" id="username" class="input-field" placeholder="Введите имя пользователя">
-                <button class="button purple" id="submitProfile">Создать</button>
+        <div class="content">
+            <div class="buttons">
+                <div class="button" onclick="showStats()">📊 Статистика</div>
+                <div class="button" onclick="showReferrals()">🤝 Рефералы</div>
+                <div class="button" onclick="showSettings()">⚙️ Настройки</div>
+                <div class="button" onclick="showSignals()">📡 Сигналы</div>
+                <div class="button" onclick="showTrades()">📈 Сделки</div>
+                <div class="button" onclick="showAI()">🧠 AI Модель</div>
             </div>
-        </div>
-
-        <!-- Основной интерфейс -->
-        <div id="mainInterface">
-            <div class="stats">
-                <div class="stat-item">Наград: 0.3993 USDT</div>
-                <div class="stat-item">Всего: 16571.6171 USDT</div>
-            </div>
-            <div class="section">
-                <h3>Партнеры</h3>
-                <div class="progress" style="width: 17%;"></div>
-                Всего: 17/100<br>
-                Личные: 10/3
-            </div>
-            <button class="button purple">Партнеры</button>
-            <button class="button purple">Приглашения</button>
-            <button class="button purple">Награды</button>
-            <div class="section">
-                <h3>Доходы</h3>
-                <div class="income-list">
-                    <div class="income-item">20 мая 2025: +0.3993 USDT</div>
-                    <div class="income-item">19 мая 2025: +13.8037 USDT</div>
-                    <div class="income-item">18 мая 2025: -1.4679 USDT</div>
+            <div id="statsSection" class="section" style="display: none;">
+                <h3>Статистика</h3>
+                <div class="stats-list" id="statsList">
+                    <div class="stat-item">Сделок: <span id="tradeCount">0</span></div>
+                    <div class="stat-item">Прибыль: <span id="profit">0 USDT</span></div>
+                    <div class="stat-item">Лучший день: <span id="bestDay">-</span></div>
                 </div>
             </div>
-            <button class="button">Подключить кошелек</button>
-            <div class="section">
+            <div id="referralsSection" class="section" style="display: none;">
+                <h3>Рефералы</h3>
+                <div class="stats-list">
+                    <div class="stat-item">Ваш код: <span>ABC123</span></div>
+                    <div class="stat-item">Партнёры: <span>0</span></div>
+                    <div class="stat-item">Доход: <span>0 USDT</span></div>
+                </div>
+            </div>
+            <div id="settingsSection" class="section" style="display: none;">
                 <h3>Настройки</h3>
-                <button class="button">Светлая</button>
-                <button class="button">Системная</button>
-                <button class="button purple">Темная</button>
+                <div class="stats-list">
+                    <div class="stat-item">Риск на сделку: <span>1%</span></div>
+                    <div class="stat-item">Макс. сделок: <span>5</span></div>
+                    <div class="stat-item">API: <span>Не подключён</span></div>
+                </div>
+            </div>
+            <div id="signalsSection" class="section" style="display: none;">
+                <h3>Текущие сигналы</h3>
+                <div class="signals-list" id="signalsList">
+                    <div class="signal-item">BTCUSDT: Ликвидации $600K</div>
+                </div>
+                <div class="loading" id="signalsLoading"></div>
+            </div>
+            <div id="tradesSection" class="section" style="display: none;">
+                <h3>Активные сделки</h3>
+                <div class="trades-list" id="tradesList">
+                    <div class="trade-item">BTCUSDT: Лонг +2.5%</div>
+                </div>
+            </div>
+            <div id="aiSection" class="section" style="display: none;">
+                <h3>AI Модель</h3>
+                <div class="stats-list">
+                    <div class="stat-item">Точность: <span>70%</span></div>
+                    <div class="stat-item">Последний прогноз: <span>Лонг BTCUSDT</span></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Подключение Telegram Web App API -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-
-        const profileCreation = document.getElementById('profileCreation');
-        const mainInterface = document.getElementById('mainInterface');
-        const submitProfile = document.getElementById('submitProfile');
-        const usernameInput = document.getElementById('username');
-
-        // Проверка, создан ли профиль (для демонстрации используем localStorage)
-        if (localStorage.getItem('profileCreated')) {
-            profileCreation.style.display = 'none';
-            mainInterface.style.display = 'block';
+        // Показ/скрытие секций
+        function hideAllSections() {
+            document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
         }
 
-        submitProfile.addEventListener('click', () => {
-            const username = usernameInput.value.trim();
-            if (username) {
-                tg.showPopup({
-                    message: `Профиль ${username} создан!`,
-                    buttons: [{ text: 'OK', type: 'default' }]
-                });
-                localStorage.setItem('profileCreated', 'true');
-                profileCreation.style.display = 'none';
-                mainInterface.style.display = 'block';
-            } else {
-                tg.showPopup({
-                    message: 'Пожалуйста, введите имя пользователя',
-                    buttons: [{ text: 'OK', type: 'default' }]
-                });
-            }
-        });
+        function showStats() {
+            hideAllSections();
+            document.getElementById('statsSection').style.display = 'block';
+            updateStats();
+        }
 
-        document.querySelectorAll('#mainInterface .button').forEach(button => {
-            button.addEventListener('click', () => {
-                tg.showPopup({
-                    message: 'Функция в разработке',
-                    buttons: [{ text: 'OK', type: 'default' }]
-                });
+        function showReferrals() {
+            hideAllSections();
+            document.getElementById('referralsSection').style.display = 'block';
+        }
+
+        function showSettings() {
+            hideAllSections();
+            document.getElementById('settingsSection').style.display = 'block';
+        }
+
+        function showSignals() {
+            hideAllSections();
+            document.getElementById('signalsSection').style.display = 'block';
+            updateSignals();
+        }
+
+        function showTrades() {
+            hideAllSections();
+            document.getElementById('tradesSection').style.display = 'block';
+            updateTrades();
+        }
+
+        function showAI() {
+            hideAllSections();
+            document.getElementById('aiSection').style.display = 'block';
+        }
+
+        // Обновление данных
+        let trades = [];
+        let signals = [];
+        let tradeCount = 0;
+        let profit = 0;
+
+        function updateStats() {
+            document.getElementById('tradeCount').innerText = tradeCount;
+            document.getElementById('profit').innerText = profit.toFixed(2) + ' USDT';
+            document.getElementById('bestDay').innerText = profit > 0 ? 'Сегодня' : '-';
+        }
+
+        function updateSignals() {
+            const signalsList = document.getElementById('signalsList');
+            signalsList.innerHTML = '';
+            signals.forEach(signal => {
+                const item = document.createElement('div');
+                item.className = 'signal-item';
+                item.innerText = signal;
+                signalsList.appendChild(item);
             });
-        });
+        }
+
+        function updateTrades() {
+            const tradesList = document.getElementById('tradesList');
+            tradesList.innerHTML = '';
+            trades.forEach(trade => {
+                const item = document.createElement('div');
+                item.className = 'trade-item';
+                item.innerText = trade;
+                tradesList.appendChild(item);
+            });
+        }
+
+        // Логика сигналов и сделок
+        function checkSignals() {
+            // Пример сигналов (имитация)
+            const newSignals = [
+                { type: 'liquidations', value: 600000, threshold: 500000 },
+                { type: 'volume', value: 62, threshold: 50 },
+                { type: 'price', value: 3.5, threshold: 3 }
+            ];
+
+            let strongSignals = 0;
+            let totalSignals = 0;
+
+            newSignals.forEach(signal => {
+                if (signal.value >= signal.threshold) {
+                    totalSignals++;
+                    if (['liquidations', 'volume', 'price'].includes(signal.type)) {
+                        strongSignals++;
+                    }
+                    signals.push(`BTCUSDT: ${signal.type} ${signal.value}${signal.type === 'liquidations' ? 'K' : '%'}`);
+                }
+            });
+
+            // Условие входа: 2 сильных сигнала или 3 любых
+            if (strongSignals >= 2 || totalSignals >= 3) {
+                enterTrade('BTCUSDT', 'long');
+            }
+        }
+
+        function enterTrade(symbol, direction) {
+            const profitTarget = 3 + Math.random() * 2; // 3-5%
+            trades.push(`${symbol}: ${direction} +${profitTarget.toFixed(1)}%`);
+            tradeCount++;
+            profit += profitTarget * 10; // Имитация прибыли
+            updateTrades();
+            updateStats();
+
+            // Выход из сделки через 10 секунд (имитация)
+            setTimeout(() => {
+                trades = trades.filter(trade => !trade.startsWith(symbol));
+                updateTrades();
+            }, 10000);
+        }
+
+        // Периодический анализ сигналов
+        setInterval(() => {
+            signals = [];
+            checkSignals();
+            updateSignals();
+        }, 30000); // Каждые 30 секунд
     </script>
 </body>
 </html>
